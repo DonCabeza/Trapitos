@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['rol'] !== 'administrador') {
 require "funciones/conexion.php";
 $con = conecta();
 
-// Si no viene un ID por GET, regresamos al panel grid
+
 if (!isset($_GET['id'])) {
     header("Location: usuarios_modificar.php");
     exit();
@@ -17,7 +17,7 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 
-// Consultamos en la tabla unificada asegurando que sea un empleado por seguridad
+
 $sql = "SELECT id_usuario, username FROM usuarios WHERE id_usuario = $1 AND rol = 'empleado'";
 $res = pg_query_params($con, $sql, array($id));
 
