@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['rol'] !== 'administrador') {
 include("funciones/conexion.php");
 $con = conecta();
 
-// Consultamos solo a los usuarios con rol de empleado para proteger la cuenta administrador
+
 $query = "SELECT id_usuario, username, rol FROM usuarios WHERE rol = 'empleado' ORDER BY username ASC";
 $resultado = pg_query($con, $query);
 ?>
