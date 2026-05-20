@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit();
     }
-    
+
 }
 
 // =========================================================================
@@ -215,6 +215,5 @@ $seccion = $_GET['seccion'] ?? 'ver';
                 </form>
             </div>
         <?php endif; ?>
-
     </div> </body>
 </html>
