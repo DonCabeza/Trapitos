@@ -1,6 +1,4 @@
-// =======================================================
-// FUNCIONES DE VALIDACIÓN DE INTERFAZ (GUI) - MIS TRAPITOS
-// =======================================================
+
 function validarLog() {
     // 1. Obtener los valores de los campos del formulario index.php
     var usuario = document.getElementById("usuario").value.trim();
@@ -22,7 +20,7 @@ function validarLog() {
         method: 'POST',
         body: datos
     })
-    .then(response => response.text()) // Convertimos la respuesta del servidor a texto plano
+    .then(response => response.text()) 
     .then(texto => {
         if (texto.trim() === "OK") {
             // Caso Exitoso: Redirección inmediata al archivo del menú principal
@@ -41,7 +39,7 @@ function validarLog() {
         }
     });
 }
-// 1. Validar Alta/Modificación de Usuarios (Replaces validarE) - RF-17
+// 1. Validar Alta/Modificación de Usuarios - RF-17
 function validarUsuario() {
     var username = document.getElementById("username").value.trim();
     var contrasena = document.getElementById("contraseña").value.trim();
@@ -64,7 +62,7 @@ function validarUsuario() {
     return true;
 }
 
-// 2. Validar Alta de Clientes (Replaces validarPac) - RF-07
+// 2. Validar Alta de Clientes - RF-07
 function validarCliente() {
     var nombre = document.getElementById("nombre").value.trim();
     var telefono = document.getElementById("telefono").value.trim();
@@ -86,7 +84,7 @@ function validarCliente() {
     return true;
 }
 
-// 3. Validar Alta de Proveedores (Replaces validarDoctor) - RF-09
+// 3. Validar Alta de Proveedores  - RF-09
 function validarProveedor() {
     let nombre = document.getElementById("nombre").value.trim();
     let telefono = document.getElementById("telefono").value.trim();
@@ -112,7 +110,7 @@ function validarProveedor() {
     return true;
 }
 
-// 4. Validar Registro de Productos en Almacén (Replaces validarCita) - RF-01, RF-05
+// 4. Validar Registro de Productos en Almacén  - RF-01, RF-05
 function validarProducto() {
     let nombre = document.getElementById("nombre").value.trim();
     let precio = document.getElementById("precio").value.trim();
