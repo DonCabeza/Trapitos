@@ -2,9 +2,9 @@
 <?php
 
 define("HOST", 'localhost');define("PORT", '5432');
-define("BD", 'trapitos_db');
-define("USER_BD", 'postgres');
-define("PASS_BD", '1234');
+define("BD", 'trapitos_Db');
+define("USER_BD", 'usuario_php');
+define("PASS_BD", '123456');
 
 function conecta() {
     $cadenaConexion = "host=" . HOST . " port=" . PORT . " dbname=" . BD . " user=" . USER_BD . " password=" . PASS_BD;

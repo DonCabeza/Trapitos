@@ -36,12 +36,12 @@ $usuario = $_SESSION['usuario'];
             <table class="Opciones">
                 <tr><th colspan="2">Almacen E Inventario</th></tr>
                 <tr>
-                    <td><a href="productos_alta.php" class="accion">Registrar Producto</a></td>
-                    <td><a href="productos_lista.php" class="accion">Ver Inventario</a></td>
+                    <td><a href="inventario.php?=registrar" class="accion">Registrar Producto</a></td>
+                    <td><a href="inventario.php?=ver" class="accion">Ver Inventario</a></td>
                 </tr>
                 <tr>
-                    <td><a href="productos_modifica.php" class="accion">Modificar Producto</a></td>
-                    <td><a href="productos_elimina.php" class="accion eliminar">Dar de Baja</a></td>
+                    <td><a href="inventario.php?=modificar" class="accion">Modificar Producto</a></td>
+                    <td><a href="inventario.php?=eliminar" class="accion">Dar de Baja</a></td>
                 </tr>
                 <tr>
                     <td colspan="2"><a href="productos_categorias.php" class="accion">Gestionar Categorías</a></td>
@@ -106,12 +106,12 @@ $usuario = $_SESSION['usuario'];
                 </tr>
                                 <tr><th colspan="2">PRODUCTOS</th></tr>
                 <tr>
-                    <td><a href="productos_alta.php" class="accion">Registrar Producto</a></td>
-                    <td><a href="productos_lista.php" class="accion">Ver Inventario</a></td>
+                    <td><a href="inventario.php?=registrar" class="accion">Registrar Producto</a></td>
+                    <td><a href="inventario.php?=ver" class="accion">Ver Inventario</a></td>
                 </tr>
                 <tr>
-                    <td><a href="productos_modifica.php" class="accion">Modificar Producto</a></td>
-                    <td><a href="productos_elimina.php" class="accion eliminar">Dar de Baja</a></td>
+                    <td><a href="inventario.php?=modificar" class="accion">Modificar Producto</a></td>
+                    <td><a href="inventario.php?=eliminar" class="accion eliminar">Dar de Baja</a></td>
                 </tr>
                 <tr>
                     <td colspan="2"><a href="productos_categorias.php" class="accion">Gestionar Categorías</a></td>
