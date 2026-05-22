@@ -1,6 +1,4 @@
-
-  
-        let carrito = [];
+let carrito = [];
 
         function agregarAlCarrito() {
             const select = document.getElementById("select-producto");
@@ -11,18 +9,22 @@
 
             const option = select.options[select.selectedIndex];
             const nombre = option.getAttribute("data-nombre");
-            const precio = parseFloat(option.getAttribute("data-precio"));
+            const precioOriginal = parseFloat(option.getAttribute("data-precio"));
+            const porcentajeDescuento = parseFloat(option.getAttribute("data-descuento"));
             const stockMax = parseInt(option.getAttribute("data-stock"));
             const cantidad = parseInt(inputCant.value);
 
             if(cantidad <= 0) return alert("La cantidad debe ser mayor a 0.");
             
-            // Verificar si el producto ya está en el carrito para sumar la cantidad
+            // CÓMPUTO MATEMÁTICO DEL DESCUENTO VIGENTE
+            const descuento = precioOriginal * (porcentajeDescuento / 100);
+            const precioConDescuento = precioOriginal - descuento;
+
             const existe = carrito.find(item => item.id_producto === id_producto);
             const cantidadTotal = existe ? (existe.cantidad + cantidad) : cantidad;
 
             if(cantidadTotal > stockMax) {
-                return alert(`No puedes agregar esa cantidad. El stock disponible es de ${stockMax} piezas.`);
+                return alert(`Existencias insuficientes. El stock actual en almacén es de ${stockMax} piezas.`);
             }
 
             if(existe) {
@@ -31,14 +33,13 @@
             } else {
                 carrito.push({
                     id_producto: id_producto,
-                    nombre: nombre,
-                    precio: precio,
+                    nombre: nombre + (porcentajeDescuento > 0 ? ` (-${porcentajeDescuento}%)` : ''),
+                    precio: precioConDescuento,
                     cantidad: cantidad,
-                    subtotal: precio * cantidad
+                    subtotal: precioConDescuento * cantidad
                 });
             }
 
-            // Resetear cantidad a 1
             inputCant.value = "1";
             renderCarrito();
         }
@@ -59,7 +60,7 @@
                 tr.innerHTML = `
                     <td>${item.nombre}</td>
                     <td>$${item.precio.toFixed(2)}</td>
-                    <td>${item.cantidad}</td>
+                    <td>${item.cantidad} pzas</td>
                     <td>$${item.subtotal.toFixed(2)}</td>
                     <td><button type="button" class="btn-eliminar" onclick="eliminarDelCarrito('${item.id_producto}')"><i class="ri-delete-bin-6-line"></i></button></td>
                 `;
@@ -67,16 +68,17 @@
             });
 
             document.getElementById("txt-total").textContent = `$${total.toFixed(2)}`;
-            document.getElementById("total_venta").value = total;
+            document.getElementById("total_venta").value = total.toFixed(2);
         }
 
-        function prepararEnvio() {
+        function perderFoco() {
             if(carrito.length === 0) {
-                alert("El carrito está vacío. Añade al menos una prenda para cobrar.");
+                alert("El carrito está vacío.");
                 return false;
             }
-            // Guardamos el array como texto JSON en el input hidden para enviárselo completo a PHP
             document.getElementById("carrito_json").value = JSON.stringify(carrito);
             return true;
         }
-    
+        
+        // Alias de validación antes del submit
+        document.getElementById("form-venta").onsubmit = perderFoco;
