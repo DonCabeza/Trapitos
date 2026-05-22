@@ -284,3 +284,38 @@ body::before {
     transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(127, 200, 248, 0.4);
 }
+
+        .filtros-contenedor {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .btn-filtro {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            background: white;
+            color: #555;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-filtro:hover {
+            background: #f0f0f0;
+        }
+        .btn-filtro.activo {
+            background: var(--azul-principal, #3498db);
+            color: white;
+            border-color: var(--azul-principal, #3498db);
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-badge.activa { background: #e8f5e9; color: #2e7d32; }
+        .status-badge.inactiva { background: #ffeffee; color: #c62828; }
