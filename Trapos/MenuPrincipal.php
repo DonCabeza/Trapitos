@@ -66,9 +66,9 @@ $usuario = $_SESSION['usuario'];
                    
                 </tr>
                                 <tr><th colspan="2">Gestionar promociones</th></tr>
-                <tr>
-                    <td><a href="productos_alta.php" class="accion">Registrar Producto</a></td>
-                    <td><a href="productos_lista.php" class="accion">Ver Inventario</a></td>
+                   <tr>
+                    <td><a href="promociones_alta.php" class="accion">Registrar Promoción</a></td>
+                    <td><a href="promociones_lista.php?filtro=todas" class="accion">Ver Promociones</a></td>
                 </tr>
                 <tr>
                     <td><a href="productos_modifica.php" class="accion">Modificar Producto</a></td>
@@ -117,15 +117,10 @@ $usuario = $_SESSION['usuario'];
                     <td colspan="2"><a href="inventario.php?seccion=gc" class="accion">Gestionar Categorías</a></td>
                 </tr>
                                 <tr><th colspan="2">DESCUENTOS</th></tr>
-                <tr>
-                    <td><a href="productos_alta.php" class="accion">Dar de alta promocion </a></td>
-                    <td><a href="productos_lista.php" class="accion">Lista de promociones</a></td>
+              <tr>
+                    <td><a href="promociones_lista.php?filtro=todas" class="accion">Lista de promociones</a></td>
                 </tr>
-                <tr>
-                    <td><a href="productos_modifica.php" class="accion">Modificar Promocion</a></td>
-                    <td><a href="productos_elimina.php" class="accion eliminar">Dar de Baja promocion</a></td>
-                </tr>
-                
+
 
 
             </table>
