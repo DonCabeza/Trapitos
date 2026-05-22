@@ -1,6 +1,6 @@
 <?php
 session_start();
-// Control de acceso: Tanto administrador como empleado pueden vender
+
 if (!isset($_SESSION['rol'])) {
     header("Location: index.php");
     exit;
@@ -13,8 +13,18 @@ $con = conecta();
 $query_clientes = "SELECT id_cliente, nombre FROM cliente ORDER BY nombre ASC";
 $res_clientes = pg_query($con, $query_clientes);
 
-// 2. Obtener los productos con stock disponible para el selector del carrito
-$query_productos = "SELECT id_producto, nombre, precio, stock, talla, color FROM productos WHERE stock > 0 ORDER BY nombre ASC";
+// 2. Obtener los productos con stock y promociones disponibles para el selector del carrito
+$query_productos = "SELECT p.id_producto, p.nombre, p.precio, p.stock, p.talla, p.color, 
+                           COALESCE(MAX(d.porcentaje), 0) AS descuento_porcentaje,
+                           COALESCE(MAX(d.nombre_promo), '') AS nombre_promocion
+                    FROM productos p
+                    LEFT JOIN descuentos d ON p.id_producto = d.id_producto 
+                        AND d.activo = TRUE 
+                        AND CURRENT_DATE BETWEEN d.fecha_inicio AND d.fecha_fin
+                    WHERE p.stock > 0 
+                    GROUP BY p.id_producto, p.nombre, p.precio, p.stock, p.talla, p.color
+                    ORDER BY p.nombre ASC";
+
 $res_productos = pg_query($con, $query_productos);
 ?>
 
@@ -29,7 +39,7 @@ $res_productos = pg_query($con, $query_productos);
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         .ventas-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px; }
-        .panel-izquierdo, .panel-derecho { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .panel-izquierdo, .panel-derecho { background: #ceabf3; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .selector-producto { display: flex; gap: 10px; margin-bottom: 20px; align-items: flex-end; }
         .selector-producto div { flex-grow: 1; }
         .tabla-carrito { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -43,9 +53,10 @@ $res_productos = pg_query($con, $query_productos);
 </head>
 <body>
 
-    <div class="main-container" style="max-width: 95%; margin: 0 auto; padding: 20px;">
-        <div class="dashboard-header" style="display: flex; align-items: center; justify-content: space-between;">
-            <a href="menuprincipal.php" class="nuevo" style="text-decoration: none;"><i class="ri-arrow-left-line"></i> Menú</a>
+<div class="main-container" style="max-width: 95%; margin: 0 auto; padding: 20px;">
+        
+        <div class="dashboard-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <a href="MenuPrincipal.php" class="nuevo" style="text-decoration: none;"><i class="ri-arrow-left-line"></i> Menú</a>
             <h1><i class="ri-shopping-cart-2-line" style="color: #3498db;"></i> Módulo de Caja / Nueva Venta</h1>
         </div>
 
@@ -56,17 +67,30 @@ $res_productos = pg_query($con, $query_productos);
                 <div class="selector-producto">
                     <div style="flex: 2;">
                         <label style="font-weight:bold; font-size:12px;">Selecciona la prenda:</label>
-                        <select id="select-producto">
+                        <select id="select-producto" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
                             <option value="">-- Elige una prenda --</option>
                             <?php while($p = pg_fetch_assoc($res_productos)) { 
-                                $detalles = "{$p['nombre']} ({$p['talla']} - {$p['color']}) - \${$p['precio']} [Stock: {$p['stock']}]";
-                                echo "<option value='{$p['id_producto']}' data-precio='{$p['precio']}' data-stock='{$p['stock']}' data-nombre='{$p['nombre']}'>{$detalles}</option>";
+                                $descuento_porcentaje = floatval($p['descuento_porcentaje']);
+                                $precio_final = $p['precio'] - ($p['precio'] * ($descuento_porcentaje / 100));
+                                
+                                $tag_promo = "";
+                                if ($descuento_porcentaje > 0) {
+                                    $tag_promo = " [¡{$p['nombre_promocion']} -{$descuento_porcentaje}%!]";
+                                }
+                                
+                                $detalles = "{$p['nombre']} ({$p['talla']} - {$p['color']}) - Precio: \${$precio_final} (Reg: \${$p['precio']}){$tag_promo} [Stock: {$p['stock']}]";
+                                
+                                echo "<option value='{$p['id_producto']}' 
+                                              data-precio='{$p['precio']}' 
+                                              data-descuento='{$descuento_porcentaje}' 
+                                              data-stock='{$p['stock']}' 
+                                              data-nombre='{$p['nombre']}'>{$detalles}</option>";
                             } ?>
                         </select>
                     </div>
                     <div style="flex: 0.5;">
                         <label style="font-weight:bold; font-size:12px;">Cant:</label>
-                        <input type="number" id="input-cantidad" value="1" min="1">
+                        <input type="number" id="input-cantidad" value="1" min="1" style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #ccc;">
                     </div>
                     <button type="button" class="nuevo" onclick="agregarAlCarrito()" style="padding: 10px 15px;"><i class="ri-add-line"></i> Agregar</button>
                 </div>
@@ -75,7 +99,7 @@ $res_productos = pg_query($con, $query_productos);
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Precio Unitario</th>
+                            <th>Precio Unitario (Con Desc.)</th>
                             <th>Cantidad</th>
                             <th>Subtotal</th>
                             <th>Acción</th>
@@ -88,7 +112,7 @@ $res_productos = pg_query($con, $query_productos);
 
             <div class="panel-derecho">
                 <h3>Finalizar Transacción</h3>
-                <form id="form-venta" method="POST" action="ventas_salva.php" onsubmit="return prepararEnvio();">
+                <form id="form-venta" method="POST" action="ventas_guarda.php" onsubmit="return prepararEnvio();">
                     
                     <div class="input-block">
                         <label for="id_cliente">Cliente (Opcional):</label>
