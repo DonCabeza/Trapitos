@@ -1,10 +1,10 @@
 <?php
 // 1. CONFIGURACIÓN Y CONEXIÓN
-// ¡Asegúrate de que la variable dentro de este archivo se llame $conexion!
 require_once 'funciones/conexion.php'; 
 $con = conecta();
+
 // =========================================================================
-// 2. LOGICA DE ENVÍO DE DATOS (Se ejecuta solo al presionar "Guardar/Actualizar")
+// 2. LOGICA DE ENVÍO DE DATOS (Se ejecuta solo al presionar "Guardar/Actualizar/Eliminar")
 // =========================================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
@@ -71,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit();
     }
-
 }
 
 // =========================================================================
@@ -96,6 +95,7 @@ $seccion = $_GET['seccion'] ?? 'ver';
         
         <div class="boton">
             <a href="Inventario.php?seccion=ver" class="accion">Ver Inventario</a>
+            <a href="Inventario.php?seccion=gc" class="accion">Gestionar Categorías</a>
             <a href="Inventario.php?seccion=registrar" class="nuevo">Nuevo Producto</a>
             <a href="MenuPrincipal.php" class="accion eliminar">Volver al Menú</a>
         </div>
@@ -103,6 +103,8 @@ $seccion = $_GET['seccion'] ?? 'ver';
         <?php if (isset($_GET['msg'])): ?>
             <?php if ($_GET['msg'] === 'exito'): ?>
                 <div class="mensaje exito">¡Operación realizada correctamente!</div>
+            <?php elseif ($_GET['msg'] === 'eliminado'): ?>
+                <div class="mensaje exito">¡El producto fue dado de baja exitosamente!</div>
             <?php else: ?>
                 <div class="mensaje error">
                     <strong>Error en la base de datos:</strong> <br>
@@ -111,26 +113,65 @@ $seccion = $_GET['seccion'] ?? 'ver';
             <?php endif; ?>
         <?php endif; ?>
 
-       <?php 
+        <?php 
         // =================================================================
-        // SUB-RENDERIZADO: VER INVENTARIO
+        // SUB-RENDERIZADO: VER INVENTARIO (RF-14: Consultar por categoría)
         // =================================================================
         if ($seccion === 'ver'): 
-            $query = "SELECT * FROM productos ORDER BY id_producto DESC";
-            $res = pg_query($con, $query);
+            $filtro_cat = $_GET['filtro_cat'] ?? '';
+
+            // 1. Buscamos todas las categorías existentes para armar el menú desplegable
+            $query_cats = "SELECT DISTINCT categoria FROM productos WHERE categoria IS NOT NULL AND categoria != '' ORDER BY categoria ASC";
+            $res_cats = pg_query($con, $query_cats);
         ?>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--azul-principal); margin: 0;">
+                    <?php echo ($filtro_cat !== '') ? "Mostrando: " . htmlspecialchars($filtro_cat) : "Todos los Productos"; ?>
+                </h3>
+                
+                <form action="Inventario.php" method="GET" style="margin: 0; display: flex; gap: 10px; align-items: center;">
+                    <input type="hidden" name="seccion" value="ver">
+                    <label style="font-weight: 500; color: var(--azul-oscuro);">Filtrar:</label>
+                    <select name="filtro_cat" onchange="this.form.submit()" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; outline: none;">
+                        <option value="">-- Todas las categorías --</option>
+                        <?php 
+                        if ($res_cats) {
+                            while ($cat = pg_fetch_assoc($res_cats)) {
+                                // Mantenemos seleccionada la categoría que el usuario está viendo
+                                $selected = ($filtro_cat === $cat['categoria']) ? 'selected' : '';
+                                echo '<option value="' . htmlspecialchars($cat['categoria']) . '" ' . $selected . '>' . htmlspecialchars($cat['categoria']) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <noscript><button type="submit" class="accion">Buscar</button></noscript>
+                </form>
+            </div>
+
+            <?php
+            // 2. Ejecutamos la consulta dependiendo de si hay filtro o no
+            if ($filtro_cat !== '') {
+                $query = "SELECT * FROM productos WHERE categoria = $1 ORDER BY id_producto DESC";
+                $res = pg_query_params($con, $query, array($filtro_cat));
+            } else {
+                $query = "SELECT * FROM productos ORDER BY id_producto DESC";
+                $res = pg_query($con, $query);
+            }
+            ?>
+
             <table class="Opciones">
                 <thead>
                     <tr>
-                        <th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th>
+                        <th>ID</th><th>Nombre</th><th>Precio</th><th>Categoría</th><th>Stock</th><th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if($res): while ($fila = pg_fetch_assoc($res)): ?>
+                    <?php if($res && pg_num_rows($res) > 0): while ($fila = pg_fetch_assoc($res)): ?>
                     <tr>
                         <td><?php echo $fila['id_producto']; ?></td>
                         <td><?php echo htmlspecialchars($fila['nombre']); ?></td>
                         <td>$<?php echo $fila['precio']; ?></td>
+                        <td><?php echo htmlspecialchars($fila['categoria']); ?></td>
                         <td><?php echo $fila['stock']; ?></td>
                         <td>
                             <div class="funciones">
@@ -139,15 +180,55 @@ $seccion = $_GET['seccion'] ?? 'ver';
                                 <form action="Inventario.php" method="POST" style="margin: 0;" onsubmit="return confirm('¿Estás seguro de que deseas dar de baja este producto de forma permanente?');">
                                     <input type="hidden" name="accion" value="eliminar">
                                     <input type="hidden" name="id_producto" value="<?php echo $fila['id_producto']; ?>">
-                                    
                                     <button type="submit" class="accion eliminar" style="cursor: pointer;">Dar de Baja</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
-                    <?php endwhile; endif; ?>
+                    <?php endwhile; else: ?>
+                    <tr><td colspan="6" style="text-align:center;">No hay productos que coincidan con esta categoría.</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
+
+        <?php 
+        // =================================================================
+        // SUB-RENDERIZADO: GESTIONAR CATEGORÍAS (RF-04)
+        // =================================================================
+        elseif ($seccion === 'gc'): 
+            // Buscamos todas las categorías únicas y contamos cuántos productos tienen
+            $query_cat = "SELECT categoria, COUNT(id_producto) as total FROM productos WHERE categoria IS NOT NULL AND categoria != '' GROUP BY categoria ORDER BY categoria ASC";
+            $res_cat = pg_query($con, $query_cat);
+        ?>
+            <div class="alta-form" style="margin: 0 auto; width: 80%;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0;">Organizar Productos por Categoría</h3>
+                    <a href="Inventario.php?seccion=registrar" class="nuevo" style="text-decoration: none; padding: 8px 15px; font-size: 14px;">+ Crear Categoría</a>
+                </div>
+                <table class="Opciones">
+                    <thead>
+                        <tr>
+                            <th>Nombre de la Categoría</th>
+                            <th>Total de Productos</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if($res_cat && pg_num_rows($res_cat) > 0): while ($cat = pg_fetch_assoc($res_cat)): ?>
+                        <tr>
+                            <td><strong><?php echo htmlspecialchars($cat['categoria']); ?></strong></td>
+                            <td><?php echo $cat['total']; ?> productos</td>
+                            <td>
+                                <a href="Inventario.php?seccion=ver&filtro_cat=<?php echo urlencode($cat['categoria']); ?>" class="accion">Filtrar Productos</a>
+                            </td>
+                        </tr>
+                        <?php endwhile; else: ?>
+                        <tr><td colspan="3" style="text-align: center;">Aún no has asignado categorías a tus productos.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>-
 
         <?php 
         // =================================================================
@@ -163,10 +244,12 @@ $seccion = $_GET['seccion'] ?? 'ver';
                     <input type="text" name="nombre" placeholder="Nombre" required>
                     <input type="number" step="0.01" name="precio" placeholder="Precio" required>
                     <input type="number" name="stock" placeholder="Stock Inicial">
-                    <input type="text" name="categoria" placeholder="Categoría">
-                    <input type="text" name="talla" placeholder="Talla">
+                    
+                    <input type="text" name="categoria" placeholder="Categoría (Ej. Pantalones)">
+                    <input type="text" name="talla" placeholder="Talla (Ej. M, 32)">
                     <input type="text" name="color" placeholder="Color">
-                    <label>Proveedor:</label>
+                    
+                    <label style="display:block; text-align:left; margin-top:10px; font-size:14px; color:var(--azul-principal);">Proveedor:</label>
                     <select name="id_proveedor">
                         <option value="">-- Sin proveedor --</option>
                         <?php 
@@ -175,13 +258,12 @@ $seccion = $_GET['seccion'] ?? 'ver';
                         
                         if ($res_prov) {
                             while ($prov = pg_fetch_assoc($res_prov)) {
-                                echo '<option value="' . $prov['id_proveedor'] . '">' . 
-                                    htmlspecialchars($prov['nombre']) . 
-                                    '</option>';
+                                echo '<option value="' . $prov['id_proveedor'] . '">' . htmlspecialchars($prov['nombre']) . '</option>';
                             }
                         }
                         ?>
                     </select><br><br> 
+                    
                     <input type="submit" value="Guardar en Base de Datos" class="nuevo" style="width: 100%;">
                 </form>
             </div>
@@ -206,14 +288,31 @@ $seccion = $_GET['seccion'] ?? 'ver';
                     <input type="text" name="nombre" value="<?php echo htmlspecialchars($producto['nombre']); ?>" required>
                     <input type="number" step="0.01" name="precio" value="<?php echo $producto['precio']; ?>" required>
                     <input type="number" name="stock" value="<?php echo $producto['stock']; ?>">
+                    
                     <input type="text" name="categoria" value="<?php echo htmlspecialchars($producto['categoria']); ?>">
                     <input type="text" name="talla" value="<?php echo htmlspecialchars($producto['talla']); ?>">
                     <input type="text" name="color" value="<?php echo htmlspecialchars($producto['color']); ?>">
-                    <input type="number" name="id_proveedor" value="<?php echo $producto['id_proveedor']; ?>">
+                    
+                    <label style="display:block; text-align:left; margin-top:10px; font-size:14px; color:var(--azul-principal);">Proveedor:</label>
+                    <select name="id_proveedor">
+                        <option value="">-- Sin proveedor --</option>
+                        <?php 
+                        $query_prov = "SELECT id_proveedor, nombre FROM proveedores ORDER BY nombre ASC";
+                        $res_prov = pg_query($con, $query_prov);
+                        
+                        if ($res_prov) {
+                            while ($prov = pg_fetch_assoc($res_prov)) {
+                                $seleccionado = ($producto['id_proveedor'] == $prov['id_proveedor']) ? 'selected' : '';
+                                echo '<option value="' . $prov['id_proveedor'] . '" ' . $seleccionado . '>' . htmlspecialchars($prov['nombre']) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select><br><br>
                     
                     <input type="submit" value="Actualizar Cambios" class="nuevo" style="width: 100%;">
                 </form>
             </div>
         <?php endif; ?>
-    </div> </body>
+    </div> 
+</body>
 </html>

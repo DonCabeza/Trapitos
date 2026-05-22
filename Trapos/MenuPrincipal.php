@@ -114,7 +114,7 @@ $usuario = $_SESSION['usuario'];
                     <td><a href="inventario.php?=eliminar" class="accion eliminar">Dar de Baja</a></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><a href="productos_categorias.php" class="accion">Gestionar Categorías</a></td>
+                    <td colspan="2"><a href="inventario.php?seccion=gc" class="accion">Gestionar Categorías</a></td>
                 </tr>
                                 <tr><th colspan="2">DESCUENTOS</th></tr>
                 <tr>
