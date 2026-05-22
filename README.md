@@ -1,7 +1,7 @@
 # Trapitos
 
 Buenas noches, como estan?
-Bien y tu jona?
+Bien y tu jona? Bien, gracias.
 
 Antes de comenzar, vean que tengan estos:
 * [XAMPP](https://www.apachefriends.org/es/index.html) (Para el servidor web Apache y PHP).
