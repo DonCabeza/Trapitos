@@ -92,7 +92,7 @@ if (!empty($id_proveedor_sel)) {
     <div class="menu-contenedor" style="max-width: 95%; margin: 20px auto;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <a href="menu_principal.php" class="nuevo" style="text-decoration: none;"><i class="ri-arrow-left-line"></i> Menú</a>
+            <a href="MenuPrincipal.php" class="nuevo" style="text-decoration: none;"><i class="ri-arrow-left-line"></i> Menú</a>
             <h1 style="margin:0;"><i class="ri-folder-shield-2-line" style="color: #27ae60;"></i> Catálogo por Proveedor</h1>
             <div></div>
         </div>
