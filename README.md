@@ -28,5 +28,5 @@ git clone [https://github.com/DonCabeza/Trapitos.git](https://github.com/DonCabe
 2. Tener lanzado el servidor psql
 3. Tengan las tablas, si no ejecuten TODAS LAS SECUCNECIAS SQL definidas en los archivos sql de repositorio
 4. Abran la ruta donde tengan el proyecto en el navegador http://localhost/index.php si ponen dentro de una carpeta pues a partir de localhost/ navegan.
-5. Asegurarse de que en el archivo todas las contraseñas y versiones sean locales
+5. Asegurarse de que en el archivo "ReRespaldo" todas las contraseñas y versiones sean locales
 
