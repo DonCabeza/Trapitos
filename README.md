@@ -26,6 +26,7 @@ git clone [https://github.com/DonCabeza/Trapitos.git](https://github.com/DonCabe
 ### Paso 2: Ejecuten todo
 1. Abrir xampp y eejcutar apache
 2. Tener lanzado el servidor psql
-3. Tengan las tablas, si no ejecuten los archivos alter_ventas y trapitos_db
+3. Tengan las tablas, si no ejecuten TODAS LAS SECUCNECIAS SQL definidas en los archivos sql de repositorio
 4. Abran la ruta donde tengan el proyecto en el navegador http://localhost/index.php si ponen dentro de una carpeta pues a partir de localhost/ navegan.
+5. Asegurarse de que en el archivo todas las contraseñas y versiones sean locales
 

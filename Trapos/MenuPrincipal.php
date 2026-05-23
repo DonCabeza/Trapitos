@@ -31,7 +31,10 @@ $usuario = $_SESSION['usuario'];
         </div>
 
         <?php if ($rol === "administrador") { ?>
-            
+        <!-- ================================================================= -->
+        <!-- ADMINISTRADOR                                                     -->
+        <!-- ================================================================= -->
+
             <h3>Menú de Administración</h3>
             <table class="Opciones">
                 <tr><th colspan="2">Almacen E Inventario</th></tr>
@@ -46,7 +49,7 @@ $usuario = $_SESSION['usuario'];
                 <tr>
                     <td colspan="2"><a href="productos_categorias.php" class="accion">Gestionar Categorías</a></td>
                 </tr>
-                <tr><th colspan="2">VENTAS Y CAJA</th></tr>
+                <tr><th colspan="2">Ventas y caja</th></tr>
                 <tr>
                     <td><a href="ventas_nueva.php" class="accion">Nueva Venta</a></td>
                     <td><a href="inventario_consulta.php" class="accion">Consultar Disponibilidad</a></td>
@@ -60,7 +63,7 @@ $usuario = $_SESSION['usuario'];
                     <td><a href="reporte_mensual.php" class="accion">Reporte Mensual</a></td>
                 </tr>
                 <tr>
-                                    <td><a href="respaldo_manual.php" class="accion eliminar">Realizar Respaldo BD</a></td>
+                                    <td><a href="ReRespaldo.php" class="accion eliminar">Realizar Respaldo BD</a></td>
                 </tr>
                                 <tr><th colspan="2">Gestion de empleados</th></tr>
                 <tr>
@@ -92,14 +95,20 @@ $usuario = $_SESSION['usuario'];
                 </tr>
                  <tr><th colspan="2">CLIENTES</th></tr>
                 <tr>
-                    <td><a href="clientes_alta.php" class="accion">Registrar Cliente</a></td>
-                    <td><a href="clientes_historial.php" class="accion">Historial de Compras</a></td>
+                    <td><a href="Clientes.php" class="accion">Registrar Cliente</a></td>
+                    <td><a href="Clientes.php?seccion=ver" class="accion">Historial de Compras</a></td>
+                </tr>
+                <tr><th colspan="2">REPORTES</th></tr>
+                <tr>
+                    <td><a href="reportes.php" class="accion">Generar reporte de ventas</a></td>
                 </tr>
 
             </table>
 
         <?php } elseif ($rol === "empleado") { ?>
-         
+        <!-- ================================================================= -->
+        <!-- VENDEDOR                                                          -->
+        <!-- ================================================================= -->
             <h3>Menú del Personal (Vendedor)</h3>
             <table class="Opciones">
                 <tr><th colspan="2">VENTAS Y CAJA</th></tr>
@@ -113,8 +122,8 @@ $usuario = $_SESSION['usuario'];
 
                 <tr><th colspan="2">CLIENTES</th></tr>
                 <tr>
-                    <td><a href="clientes_alta.php" class="accion">Registrar Cliente</a></td>
-                    <td><a href="clientes_historial.php" class="accion">Historial de Compras</a></td>
+                    <td><a href="Clientes.php" class="accion">Registrar Cliente</a></td>
+                    <td><a href="Clientes.php?seccion=ver" class="accion">Historial de Compras</a></td>
                 </tr>
 
                 <tr><th colspan="2">PROVEEDORES</th></tr>

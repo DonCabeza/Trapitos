@@ -11,3 +11,7 @@ ADD COLUMN activo BOOLEAN DEFAULT TRUE;
 -- Para que el empleado sepa en caja qué está aplicando (ej: 'Oferta de Primavera')
 ALTER TABLE public.descuentos 
 ADD COLUMN nombre_promo VARCHAR(100) NOT NULL DEFAULT 'Descuento Especial';
+
+-- Requerido para funcionar 
+ALTER TABLE public.descuentos 
+ADD COLUMN eliminado BOOLEAN NOT NULL DEFAULT FALSE;
