@@ -52,7 +52,7 @@ $usuario = $_SESSION['usuario'];
                 <tr><th colspan="2">Ventas y caja</th></tr>
                 <tr>
                     <td><a href="ventas_nueva.php" class="accion">Nueva Venta</a></td>
-                    <td><a href="inventario_consulta.php" class="accion">Consultar Disponibilidad</a></td>
+                    <td><a href="Disponibilidad.php" class="accion">Consultar Disponibilidad</a></td>
                 </tr>
                 <tr>
                     <td colspan="2"><a href="promociones_lista.php?filtro=activas" class="accion">Ver Promociones Activas</a></td>
@@ -114,7 +114,7 @@ $usuario = $_SESSION['usuario'];
                 <tr><th colspan="2">VENTAS Y CAJA</th></tr>
                 <tr>
                     <td><a href="ventas_nueva.php" class="accion">Nueva Venta</a></td>
-                    <td><a href="inventario_consulta.php" class="accion">Consultar Disponibilidad</a></td>
+                    <td><a href="Disponibilidad.php" class="accion">Consultar Disponibilidad</a></td>
                 </tr>
                 <tr>
                     <td colspan="2"><a href="promociones_lista.php?filtro=activas" class="accion">Ver Promociones Activas</a></td>
