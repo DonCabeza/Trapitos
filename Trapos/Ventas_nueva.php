@@ -32,11 +32,11 @@ $res_productos = pg_query($con, $query_productos);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nueva Venta | Mis Trapitos</title>
-    <script src="Funciones/VentasFunciones.js"></script>
-    <link rel="icon" type="image/png" href="Imagenes/icono.png">
+    <title>Nueva Venta | Mis Trapitos</title>   
+  <link rel="icon" type="image/png" href="icono.png">
     <link rel="stylesheet" href="estilo/estilo.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="Funciones/VentasFunciones.js" defer></script>
     <style>
         .ventas-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px; }
         .panel-izquierdo, .panel-derecho { background: #ceabf3; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -112,7 +112,7 @@ $res_productos = pg_query($con, $query_productos);
 
             <div class="panel-derecho">
                 <h3>Finalizar Transacción</h3>
-                <form id="form-venta" method="POST" action="ventas_guarda.php" onsubmit="return prepararEnvio();">
+                <form id="form-venta" method="POST" action="ventas_salva.php" onsubmit="return prepararEnvio();">
                     
                     <div class="input-block">
                         <label for="id_cliente">Cliente (Opcional):</label>
